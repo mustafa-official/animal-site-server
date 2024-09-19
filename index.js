@@ -33,10 +33,12 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const animalCollection = client.db("animalsDB").collection("animals");
-        
+
         //get all animals
         app.get("/animals", async (req, res) => {
-            const animals = await animalCollection.find().toArray();
+            const category = req.query.category;
+            const query = category ? { category } : {};
+            const animals = await animalCollection.find(query).toArray();
             res.send(animals)
         })
 
