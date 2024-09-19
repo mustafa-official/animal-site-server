@@ -5,8 +5,16 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
+
+const corsOptions = {
+    origin: ["http://localhost:3000"],
+    credentials: true,
+    optionSuccessStatus: 200,
+
+}
+
 //middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.elzgrcu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -24,8 +32,13 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-
-
+        const animalCollection = client.db("animalsDB").collection("animals");
+        
+        //get all animals
+        app.get("/animals", async (req, res) => {
+            const animals = await animalCollection.find().toArray();
+            res.send(animals)
+        })
 
 
 
