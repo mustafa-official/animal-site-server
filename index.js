@@ -34,14 +34,28 @@ async function run() {
         await client.connect();
         const animalCollection = client.db("animalsDB").collection("animals");
 
-        //get all animals
+        //get  animals
         app.get("/animals", async (req, res) => {
-            const category = req.query.category;
-            const query = category ? { category } : {};
+            const category = req.query.category || "Land Animal";
+            const query = { category };
             const animals = await animalCollection.find(query).toArray();
             res.send(animals)
         })
 
+        //get for category
+        app.get("/category", async(req, res)=>{
+            const category = await animalCollection.find().toArray();
+            res.send(category);
+        })
+
+        //create animal data
+        app.post("/create-animal", async (req, res) => {
+            const animalInfo = req.body;
+            const result = await animalCollection.insertOne(animalInfo);
+            res.send(result);
+        })
+
+    
 
 
         // Send a ping to confirm a successful connection
